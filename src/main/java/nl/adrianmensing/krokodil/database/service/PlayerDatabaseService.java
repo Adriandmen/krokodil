@@ -8,11 +8,9 @@ import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public final class PlayerDatabaseService {
+public final class PlayerDatabaseService implements DatabaseService<Player> {
 
     private static final int SESSION_ID_LENGTH = 32;
-
-    private PlayerDatabaseService() { }
 
     /**
      * Retrieves the player data by association of the given session id, and transforms
@@ -49,8 +47,8 @@ public final class PlayerDatabaseService {
         PreparedStatement statement = DatabaseDriver
                 .getConnection()
                 .prepareStatement("""
-                INSERT INTO session_player (SessionID, PlayerID, ExpireDate)
-                VALUES (?, ?, ?);
+                    INSERT INTO session_player (SessionID, PlayerID, ExpireDate)
+                    VALUES (?, ?, ?);
                 """);
 
         String randomSessionID = SessionIDGenerator.randomSessionID(SESSION_ID_LENGTH);
@@ -71,7 +69,7 @@ public final class PlayerDatabaseService {
         PreparedStatement statement = DatabaseDriver
                 .getConnection()
                 .prepareStatement("""
-                INSERT INTO players (Username) VALUES (?);
+                    INSERT INTO players (Username) VALUES (?);
                 """, new String[] { "PlayerID" });
 
         statement.setString(1, username);
@@ -85,5 +83,15 @@ public final class PlayerDatabaseService {
         }
 
         throw new RuntimeException("Could not create new player.");
+    }
+
+    @Override
+    public Player readColumnFromDatabase(ResultSet result) {
+        return null;
+    }
+
+    @Override
+    public Player writeColumnToDatabase(Player column) {
+        return null;
     }
 }

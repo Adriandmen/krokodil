@@ -1,6 +1,8 @@
 package nl.adrianmensing.krokodil.model;
 
-public class Player extends StorableModel {
+import nl.adrianmensing.krokodil.database.Storable;
+
+public class Player implements Model, Storable {
     private final Integer id;
     private final String username;
 

@@ -1,4 +1,4 @@
 package nl.adrianmensing.krokodil.model;
 
-public abstract class StorableModel {
+public interface Model {
 }

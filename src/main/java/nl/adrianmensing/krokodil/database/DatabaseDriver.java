@@ -7,11 +7,12 @@ import java.sql.SQLException;
 public class DatabaseDriver {
     private static final String USERNAME = System.getenv("DB_USER");
     private static final String PASSWORD = System.getenv("DB_PASS");
+    private static final String DATABASE = "krokodil_db";
     private static Connection connection = null;
 
-    public static Connection getConnection() throws SQLException {
+    public static synchronized Connection getConnection() throws SQLException {
         if (connection == null) {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/krokodil_db", USERNAME, PASSWORD);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + DATABASE, USERNAME, PASSWORD);
         }
 
         return connection;
