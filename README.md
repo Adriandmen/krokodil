@@ -9,9 +9,8 @@ This is a side project, intended to be played online with friends, as a result o
 
 ### Game state transition graph:
 
-![im](img/Krokodil.svg)
-
+![Game State Graph](img/Krokodil.svg)
 
 ### Class Diagram
 
-**TODO**: convert from paper drafts to an image
+![UML Class Diagram](img/UML.png)
