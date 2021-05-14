@@ -1,7 +1,7 @@
 package nl.adrianmensing.krokodil.controller;
 
-import nl.adrianmensing.krokodil.database.service.PlayerDatabaseService;
-import nl.adrianmensing.krokodil.model.Player;
+import nl.adrianmensing.krokodil.database.manager.PlayerDataManager;
+import nl.adrianmensing.krokodil.logic.Player;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,15 +23,15 @@ public class PlayerController {
 
         // Check if there already exists a player associated with an existing session ID.
         if (!sessionID.isEmpty()) {
-            Player player = PlayerDatabaseService.getPlayerBySessionID(sessionID);
+            Player player = PlayerDataManager.getPlayerBySessionID(sessionID);
 
             if (player != null)
                 return player;
         }
 
-        Player player = PlayerDatabaseService.createNewPlayer(username);
+        Player player = PlayerDataManager.createNewPlayer(username);
 
-        sessionID = PlayerDatabaseService.createSessionIdFromPlayer(player);
+        sessionID = PlayerDataManager.createSessionIdFromPlayer(player);
         Cookie cookie = new Cookie("session_id", sessionID);
         cookie.setMaxAge(COOKIE_MAX_AGE);
         cookie.setSecure(true);

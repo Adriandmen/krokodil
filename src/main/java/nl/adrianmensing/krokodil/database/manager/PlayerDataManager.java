@@ -1,14 +1,14 @@
-package nl.adrianmensing.krokodil.database.service;
+package nl.adrianmensing.krokodil.database.manager;
 
-import nl.adrianmensing.krokodil.database.DatabaseDriver;
-import nl.adrianmensing.krokodil.model.Player;
+import nl.adrianmensing.krokodil.database.service.MySQLDatabaseService;
+import nl.adrianmensing.krokodil.logic.Player;
 import nl.adrianmensing.krokodil.utils.SessionIDGenerator;
 
 import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public final class PlayerDatabaseService implements DatabaseService<Player> {
+public final class PlayerDataManager implements DataManager<Player> {
 
     private static final int SESSION_ID_LENGTH = 32;
 
@@ -20,7 +20,7 @@ public final class PlayerDatabaseService implements DatabaseService<Player> {
      * @return          A {@link Player} object if such an association was found, null otherwise.
      */
     public static Player getPlayerBySessionID(String sessionID) throws SQLException {
-        PreparedStatement statement = DatabaseDriver
+        PreparedStatement statement = MySQLDatabaseService
                 .getConnection()
                 .prepareStatement("""
                     SELECT p.PlayerID, p.Username FROM players AS p INNER JOIN (
@@ -44,7 +44,7 @@ public final class PlayerDatabaseService implements DatabaseService<Player> {
     }
 
     public static String createSessionIdFromPlayer(Player player) throws SQLException {
-        PreparedStatement statement = DatabaseDriver
+        PreparedStatement statement = MySQLDatabaseService
                 .getConnection()
                 .prepareStatement("""
                     INSERT INTO session_player (SessionID, PlayerID, ExpireDate)
@@ -66,7 +66,7 @@ public final class PlayerDatabaseService implements DatabaseService<Player> {
     }
 
     public static Player createNewPlayer(String username) throws SQLException {
-        PreparedStatement statement = DatabaseDriver
+        PreparedStatement statement = MySQLDatabaseService
                 .getConnection()
                 .prepareStatement("""
                     INSERT INTO players (Username) VALUES (?);
@@ -83,15 +83,5 @@ public final class PlayerDatabaseService implements DatabaseService<Player> {
         }
 
         throw new RuntimeException("Could not create new player.");
-    }
-
-    @Override
-    public Player readColumnFromDatabase(ResultSet result) {
-        return null;
-    }
-
-    @Override
-    public Player writeColumnToDatabase(Player column) {
-        return null;
     }
 }
