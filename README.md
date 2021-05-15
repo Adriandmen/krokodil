@@ -1,6 +1,6 @@
 # Krokodil
 
-[![Compile and Test stage](https://github.com/Adriandmen/krokodil/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/Adriandmen/krokodil/actions/workflows/maven.yml)
+[![Compile and Test stage](https://github.com/Adriandmen/krokodil/actions/workflows/workflow.yml/badge.svg?branch=master)](https://github.com/Adriandmen/krokodil/actions/workflows/workflow.yml)
 
 A web application based on the Crocodile game,
 where players pick a tooth in turn, and the person who picks the bad tooth loses.
