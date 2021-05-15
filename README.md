@@ -1,6 +1,6 @@
 # Krokodil
 
-[![Compile and Test stage](https://github.com/Adriandmen/krokodil/actions/workflows/workflow.yml/badge.svg?branch=master)](https://github.com/Adriandmen/krokodil/actions/workflows/workflow.yml)
+[![Compile and Test stage](https://github.com/Adriandmen/krokodil/actions/workflows/workflow.yml/badge.svg?branch=master)](https://github.com/Adriandmen/krokodil/actions/workflows/workflow.yml) [![codecov](https://codecov.io/gh/Adriandmen/krokodil/branch/master/graph/badge.svg?token=8T5PF3SLZC)](https://codecov.io/gh/Adriandmen/krokodil)
 
 A web application based on the Crocodile game,
 where players pick a tooth in turn, and the person who picks the bad tooth loses.
