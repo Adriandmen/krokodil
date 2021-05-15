@@ -1,4 +1,4 @@
-package nl.adrianmensing.krokodil.controller;
+package nl.adrianmensing.krokodil.controller.api;
 
 import nl.adrianmensing.krokodil.database.manager.PlayerDataManager;
 import nl.adrianmensing.krokodil.logic.Player;
