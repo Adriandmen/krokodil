@@ -13,7 +13,8 @@ import java.util.Map;
  * and only update at most one row per query.
  *
  * It is worth mentioning that this is a <i>weak entity</i>, as it has a one-to-one association
- * with a single {@link Game} instance, where the game is considered to be the owner.
+ * with a single {@link Game} instance, where the game is considered to be the owner. This means
+ * that there is no direct reference from a {@link GameSettings} instance to a {@link Game} instance.
  *
  * @param <T> The {@link GameType} for the settings.
  * @since 0.1.0
