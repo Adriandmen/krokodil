@@ -3,6 +3,7 @@ package nl.adrianmensing.krokodil.logic.game;
 import nl.adrianmensing.krokodil.database.manager.DataManager;
 import nl.adrianmensing.krokodil.database.Storable;
 import nl.adrianmensing.krokodil.logic.Player;
+import nl.adrianmensing.krokodil.logic.game.settings.GameSettings;
 
 import java.util.List;
 

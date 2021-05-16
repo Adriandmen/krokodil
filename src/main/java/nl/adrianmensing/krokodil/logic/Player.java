@@ -25,4 +25,5 @@ public record Player(Integer id, String username) implements Entity, Storable {
 
         return Optional.empty();
     }
+
 }

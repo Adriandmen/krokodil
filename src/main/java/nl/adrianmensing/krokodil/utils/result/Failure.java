@@ -1,8 +1,11 @@
 package nl.adrianmensing.krokodil.utils.result;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public final record Failure<R>(String errorMessage) implements Result<R> {
+
     @Override
     public boolean isSuccess() {
         return false;
@@ -22,4 +25,5 @@ public final record Failure<R>(String errorMessage) implements Result<R> {
     public final R getValue() {
         throw new NoSuchElementException();
     }
+
 }

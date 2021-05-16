@@ -1,8 +1,10 @@
-package nl.adrianmensing.krokodil.logic.game.crocodile;
+package nl.adrianmensing.krokodil.logic.game.impl.crocodile;
 
 import nl.adrianmensing.krokodil.logic.game.Game;
 import nl.adrianmensing.krokodil.logic.game.GameState;
 import nl.adrianmensing.krokodil.logic.game.GameType.CrocodileGameType;
+
+import java.util.Collections;
 
 /**
  * The Crocodile game implementation.
@@ -13,6 +15,14 @@ import nl.adrianmensing.krokodil.logic.game.GameType.CrocodileGameType;
  * @since 0.1.0
  */
 public final class CrocodileGame extends Game<CrocodileGameType> {
+
+    public CrocodileGame(int id) {
+        this.id = id;
+        this.players = Collections.emptyList();
+        this.host = null;
+        this.state = GameState.INITIALIZING;
+        this.settings = new CrocodileSettings();
+    }
 
     @Override
     public void start() {

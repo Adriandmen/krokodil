@@ -1,6 +1,6 @@
 package nl.adrianmensing.krokodil.database.manager;
 
-import nl.adrianmensing.krokodil.database.service.MySQLDatabaseService;
+import nl.adrianmensing.krokodil.database.service.mysql.MySQLDatabaseService;
 import nl.adrianmensing.krokodil.logic.Player;
 import nl.adrianmensing.krokodil.utils.SessionIDGenerator;
 

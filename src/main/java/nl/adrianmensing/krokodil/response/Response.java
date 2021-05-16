@@ -1,12 +1,11 @@
 package nl.adrianmensing.krokodil.response;
 
 import nl.adrianmensing.krokodil.logic.Entity;
+import nl.adrianmensing.krokodil.response.impl.ErrorContent;
 import nl.adrianmensing.krokodil.utils.result.Result;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Optional;
 
 /**
  * The Response interface.
@@ -32,14 +31,22 @@ public interface Response<T> {
 
     Response<T> update(Entity entity);
 
-    static <R> ResponseEntity<R> convert(Result<R> body, HttpStatus status, HttpHeaders headers) {
-        if (body.isSuccess())
-            return ResponseEntity.status(status).headers(headers).body(body.getValue());
-        return ResponseEntity.status(status).headers(headers).build();
+    private static ResponseEntity<?> convert(Object contents, HttpStatus status, HttpHeaders headers) {
+        return ResponseEntity.status(status).headers(headers).body(contents);
     }
 
-    default ResponseEntity<T> build() {
-        return convert(body(), status(), headers());
+    /**
+     * Builds and finalizes the current {@link Response} with the given body, status, and headers.
+     * It uses these fields and constructs the proper {@link ResponseEntity} which will be returned.
+     * Error messages are constructed and handled with {@link ErrorContent} instances.
+     *
+     * @return A {@link ResponseEntity} containing either an instance of type <code>&lt;T&gt;</code>, or
+     *         an instance with an error message stating what went wrong.
+     * @see ErrorContent
+     */
+    default ResponseEntity<?> build() {
+        if (this.body().isSuccess())
+            return convert(body().getValue(), status(), headers());
+        return convert(new ErrorContent(body().getErrorMessage(), status()).contents(), status(), headers());
     }
-
 }

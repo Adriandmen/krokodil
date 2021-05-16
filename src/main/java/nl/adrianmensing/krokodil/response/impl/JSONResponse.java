@@ -22,7 +22,7 @@ public record JSONResponse<T>(T value, HttpStatus status) implements BasicRespon
 
     @Override
     public Response<T> update(Entity entity) {
-        return null;
+        return new ErrorResponse<>("Cannot update JSON response", HttpStatus.BAD_REQUEST);
     }
 
     @Override

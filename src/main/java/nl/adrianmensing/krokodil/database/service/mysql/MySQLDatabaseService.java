@@ -1,4 +1,6 @@
-package nl.adrianmensing.krokodil.database.service;
+package nl.adrianmensing.krokodil.database.service.mysql;
+
+import nl.adrianmensing.krokodil.database.service.DatabaseService;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

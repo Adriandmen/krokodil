@@ -1,5 +1,7 @@
 package nl.adrianmensing.krokodil.utils.result;
 
+import java.util.Map;
+
 /**
  * The Result interface.
  *

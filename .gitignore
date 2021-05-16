@@ -32,3 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Not so secret secrets ###
+*.secret

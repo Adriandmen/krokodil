@@ -1,7 +1,10 @@
-package nl.adrianmensing.krokodil.logic.game;
+package nl.adrianmensing.krokodil.logic.game.settings;
 
 import nl.adrianmensing.krokodil.database.Storable;
+import nl.adrianmensing.krokodil.logic.game.Game;
+import nl.adrianmensing.krokodil.logic.game.GameType;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +23,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 public abstract class GameSettings<T extends GameType> implements Storable {
-    private Map<String, Object> settings;
+    protected Map<String, Object> settings = new HashMap<>();
 
     public Map<String, Object> getSettings() {
         return settings;
@@ -29,7 +32,7 @@ public abstract class GameSettings<T extends GameType> implements Storable {
     /**
      * Updates the setting using the given <code>key</code> and <code>value</code>. This method is purposefully left
      * as an abstract method, in the event that extension of this class require to do <code>key</code> and/or
-     * <code>value</code> validation (e.g., whether a certain <code>key</code> is a valid key for that subclass).
+     * <code>value</code> validation (for example, whether a certain <code>key</code> is a valid key for that subclass).
      *
      * @param key   The key for the setting that will be updated.
      * @param value The new value for the given key.
