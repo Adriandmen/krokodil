@@ -39,23 +39,22 @@ public class DynamoDBService implements DatabaseService {
         return tableNames;
     }
 
-    public static void createGameSettingsTable() {
+    public static void createGameSettingsTable() throws InterruptedException {
         String tableName = "GameSettings";
 
-        try {
-            System.out.printf("Attempting to create table '%s'%n", tableName);
-            CreateTableRequest request = new CreateTableRequest();
-            request.withTableName(tableName)
-                    .withKeySchema(Collections.singletonList(new KeySchemaElement("GameID", KeyType.HASH)))
-                    .withAttributeDefinitions(Collections.singletonList(new AttributeDefinition("GameID", ScalarAttributeType.N)))
-                    .withProvisionedThroughput(new ProvisionedThroughput(10L, 10L));
+        // The GameSettings table will have the following schema:
+        //  row:  [(pk) GameID, Settings]
+        CreateTableRequest request = new CreateTableRequest();
+        request.withTableName(tableName)
+                .withKeySchema(Collections.singletonList(new KeySchemaElement("GameID", KeyType.HASH)))
+                .withAttributeDefinitions(Collections.singletonList(new AttributeDefinition("GameID", ScalarAttributeType.S)))
+                .withProvisionedThroughput(
+                        new ProvisionedThroughput()
+                                .withReadCapacityUnits(10L)
+                                .withWriteCapacityUnits(10L));
 
-            Table table = getDynamoDB().createTable(request);
-            table.waitForActive();
-            System.out.println("Successfully created table " + tableName);
-        } catch (Exception e) {
-            System.err.println("Unable to create table");
-            e.printStackTrace();
-        }
+        Table table = getDynamoDB().createTable(request);
+        table.waitForActive();
+        System.out.println("Successfully created table " + tableName);
     }
 }

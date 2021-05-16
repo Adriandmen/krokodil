@@ -34,7 +34,7 @@ public final class PlayerDataManager implements DataManager<Player> {
         ResultSet result = statement.executeQuery();
 
         if (result.next()) {
-            int playerID = result.getInt("PlayerID");
+            String playerID = result.getString("PlayerID");
             String username = result.getString("Username");
 
             return new Player(playerID, username);
@@ -52,11 +52,11 @@ public final class PlayerDataManager implements DataManager<Player> {
                 """);
 
         String randomSessionID = SessionIDGenerator.randomSessionID(SESSION_ID_LENGTH);
-        int playerID = player.id();
+        String playerID = player.id();
         Timestamp expireTime = Timestamp.from(Instant.now().plus(7, ChronoUnit.DAYS));
 
         statement.setString(1, randomSessionID);
-        statement.setInt(2, playerID);
+        statement.setString(2, playerID);
         statement.setTimestamp(3, expireTime);
 
         if (statement.executeUpdate() > 0)
@@ -77,7 +77,7 @@ public final class PlayerDataManager implements DataManager<Player> {
         if (statement.executeUpdate() > 0) {
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                int playerID = generatedKeys.getInt(1);
+                String playerID = generatedKeys.getString(1);
                 return new Player(playerID, username);
             }
         }

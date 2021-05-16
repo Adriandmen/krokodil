@@ -1,5 +1,7 @@
 package nl.adrianmensing.krokodil.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.security.SecureRandom;
 
 public class SessionIDGenerator {
@@ -23,6 +25,7 @@ public class SessionIDGenerator {
      * @param length    The length of the random session ID, which needs to be a positive number.
      * @return          A new session ID string.
      */
+    @NotNull
     public static String randomSessionID(int length) {
         if (length <= 0)
             throw new RuntimeException("Could not generate a random session ID with length " + length);

@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record Player(Integer id, String username) implements Entity, Storable {
+public record Player(String id, String username) implements Entity, Storable {
 
     public Player {
         if (username != null && !UserUtils.isValidUsername(username))
             throw new IllegalArgumentException("Username '%s' is not a valid username".formatted(username));
     }
 
-    public Player(Integer id) {
+    public Player(String id) {
         this(id, null);
     }
 

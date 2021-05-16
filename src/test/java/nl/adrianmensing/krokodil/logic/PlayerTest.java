@@ -7,9 +7,9 @@ public class PlayerTest {
 
     @Test
     public void TestBasicPlayerInstantiation() {
-        Player player = new Player(123, "Adnan");
+        Player player = new Player("ABC", "Adnan");
 
-        assertThat(player.id()).isEqualTo(123);
+        assertThat(player.id()).isEqualTo("ABC");
         assertThat(player.username()).isEqualTo("Adnan");
     }
 }

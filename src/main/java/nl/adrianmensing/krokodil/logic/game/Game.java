@@ -20,13 +20,13 @@ import java.util.List;
  * @since 0.1.0
  */
 public abstract class Game<T extends GameType> implements Storable {
-    protected Integer id;
+    protected String id;
     protected List<Player> players;
     protected Player host;
     protected GameState state;
     protected GameSettings<T> settings;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
