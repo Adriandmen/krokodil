@@ -10,6 +10,9 @@ public class SessionIDGenerator {
     private static final String CHARS = NUMERIC_CHARS + L_ALPHA_CHARS + U_ALPHA_CHARS;
     private static final SecureRandom random = new SecureRandom();
 
+    /**
+     * Private constructor to prevent any unwanted instantiations.
+     */
     private SessionIDGenerator() { }
 
     /**

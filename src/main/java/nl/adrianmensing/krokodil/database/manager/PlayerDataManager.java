@@ -52,7 +52,7 @@ public final class PlayerDataManager implements DataManager<Player> {
                 """);
 
         String randomSessionID = SessionIDGenerator.randomSessionID(SESSION_ID_LENGTH);
-        int playerID = player.getId();
+        int playerID = player.id();
         Timestamp expireTime = Timestamp.from(Instant.now().plus(7, ChronoUnit.DAYS));
 
         statement.setString(1, randomSessionID);
