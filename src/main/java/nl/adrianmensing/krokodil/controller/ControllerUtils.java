@@ -17,9 +17,8 @@ public class ControllerUtils {
     public static Cookie cookieFromPlayer(@NotNull Player player) {
         Cookie cookie = new Cookie("session_id", player.id());
         cookie.setMaxAge(PLAYER_COOKIE_MAX_AGE);
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         return cookie;
     }
 

@@ -4,6 +4,7 @@ import nl.adrianmensing.krokodil.logic.game.Game;
 import nl.adrianmensing.krokodil.logic.game.GameState;
 import nl.adrianmensing.krokodil.logic.game.GameType.CrocodileGameType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -21,9 +22,9 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
         this(UUID.randomUUID().toString());
     }
 
-    public CrocodileGame(String id) {
+    private CrocodileGame(String id) {
         this.id = id;
-        this.players = Collections.emptyList();
+        this.players = new ArrayList<>();
         this.host = null;
         this.state = GameState.INITIALIZING;
         this.settings = new CrocodileSettings();

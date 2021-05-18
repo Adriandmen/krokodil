@@ -42,28 +42,11 @@ public class DynamoDBService implements DatabaseService {
         return tableNames;
     }
 
-    public static void createGameSettingsTable() throws InterruptedException {
-        String tableName = GAME_SETTINGS;
+    private static void createPlayersTable() throws InterruptedException {
+        String tableName = PLAYERS;
 
-        // The GameSettings table will have the following schema:
-        //  row:  [(pk) GameID, Settings]
-        CreateTableRequest request = new CreateTableRequest();
-        request.withTableName(tableName)
-                .withKeySchema(Collections.singletonList(new KeySchemaElement("GameID", KeyType.HASH)))
-                .withAttributeDefinitions(Collections.singletonList(new AttributeDefinition("GameID", ScalarAttributeType.S)))
-                .withProvisionedThroughput(
-                        new ProvisionedThroughput()
-                                .withReadCapacityUnits(10L)
-                                .withWriteCapacityUnits(10L));
-
-        Table table = getDynamoDB().createTable(request);
-        table.waitForActive();
-        System.out.println("Successfully created table " + tableName);
-    }
-
-    public static void createPlayersTable() throws InterruptedException {
-        String tableName = DynamoDBTables.PLAYERS;
-
+        // Schema:
+        // [(pk) PlayerID, Username, LastUpdated]
         CreateTableRequest request = new CreateTableRequest();
         request.withTableName(tableName)
                 .withKeySchema(Collections.singletonList(new KeySchemaElement("PlayerID", KeyType.HASH)))
@@ -78,14 +61,33 @@ public class DynamoDBService implements DatabaseService {
         System.out.println("Successfully created table " + tableName);
     }
 
+    private static void createGamesTable() throws InterruptedException {
+        String tableName = GAMES;
+
+        // Schema:
+        // [(pk) GameID, Host, Players, State, Settings]
+        CreateTableRequest request = new CreateTableRequest();
+        request.withTableName(tableName)
+                .withKeySchema(Collections.singletonList(new KeySchemaElement("GameID", KeyType.HASH)))
+                .withAttributeDefinitions(Collections.singletonList(new AttributeDefinition("GameID", ScalarAttributeType.S)))
+                .withProvisionedThroughput(
+                        new ProvisionedThroughput()
+                                .withReadCapacityUnits(10L)
+                                .withWriteCapacityUnits(10L));
+
+        Table table = getDynamoDB().createTable(request);
+        table.waitForActive();
+        System.out.println("Successfully created table " + tableName);
+    }
+
     public static void setupTables() throws InterruptedException {
-        List<String> tables = List.of(GAME_SETTINGS, PLAYERS);
+        List<String> tables = List.of(GAMES, PLAYERS);
         List<String> existingTableNames = getExistingTableNames();
 
         for (String tableName : tables) {
             if (!existingTableNames.contains(tableName)) {
                 switch (tableName) {
-                    case GAME_SETTINGS -> createGameSettingsTable();
+                    case GAMES -> createGamesTable();
                     case PLAYERS -> createPlayersTable();
                     default -> throw new NoSuchElementException("Creator function of table '%s' does not exist".formatted(tableName));
                 }

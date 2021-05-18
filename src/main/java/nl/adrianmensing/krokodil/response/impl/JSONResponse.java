@@ -16,7 +16,7 @@ public record JSONResponse<T>(T value, HttpStatus status) implements BasicRespon
     }
 
     @Override
-    public Result<T> body() {
+    public Result<T> result() {
         return new Success<>(value);
     }
 

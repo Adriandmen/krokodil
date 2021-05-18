@@ -18,7 +18,7 @@ public record ErrorResponse<T>(String errorMessage, HttpStatus status, HttpHeade
     }
 
     @Override
-    public Result<T> body() {
+    public Result<T> result() {
         return new Failure<>(errorMessage);
     }
 

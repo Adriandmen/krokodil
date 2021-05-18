@@ -24,6 +24,10 @@ public final class CrocodileSettings extends GameSettings<CrocodileGameType> {
         this.updateSetting(BAD_TEETH_COUNT, 1);
     }
 
+    public CrocodileSettings(Map<String, Object> settings) {
+        this.settings = settings;
+    }
+
     @Override
     public void updateSetting(String key, Object value) {
         if (!ALLOWED_SETTINGS.containsKey(key))

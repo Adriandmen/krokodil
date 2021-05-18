@@ -5,12 +5,15 @@ import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBService;
 import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBTables;
 import nl.adrianmensing.krokodil.logic.Player;
+import nl.adrianmensing.krokodil.logic.game.Game;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+// TODO: Implement some form of caching to reduce redundant database calls,
+//       because this is unnecessarily expensive.
 public final class PlayerDataManager implements DataManager<Player> {
 
     @Nullable
@@ -21,13 +24,14 @@ public final class PlayerDataManager implements DataManager<Player> {
         if (item == null)
             return null;
 
-        return new Player(item.getString("PlayerID"), item.getString("Username"));
+        return new Player(item.getString("PlayerID"), item.getString("Username"), item.getString("CurrentGame"));
     }
 
     public static void savePlayer(@NotNull Player player) {
         Item item = new Item()
                 .withPrimaryKey("PlayerID", player.id())
                 .withString("Username", Optional.ofNullable(player.username()).orElse(""))
+                .withString("CurrentGame", Optional.ofNullable(player.game()).orElse(""))
                 .withString("LastUpdated", ZonedDateTime.now().toString());
 
         DynamoDBService.getDynamoDB().getTable(DynamoDBTables.PLAYERS).putItem(item);

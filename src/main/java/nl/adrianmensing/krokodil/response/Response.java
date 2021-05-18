@@ -23,7 +23,7 @@ import org.springframework.http.ResponseEntity;
  */
 public interface Response<T> {
 
-    Result<T> body();
+    Result<T> result();
 
     HttpStatus status();
 
@@ -45,8 +45,8 @@ public interface Response<T> {
      * @see ErrorContent
      */
     default ResponseEntity<?> build() {
-        if (this.body().isSuccess())
-            return convert(body().getValue(), status(), headers());
-        return convert(new ErrorContent(body().getErrorMessage(), status()).contents(), status(), headers());
+        if (this.result().isSuccess())
+            return convert(result().getValue(), status(), headers());
+        return convert(new ErrorContent(result().getErrorMessage(), status()).contents(), status(), headers());
     }
 }
