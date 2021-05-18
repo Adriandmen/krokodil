@@ -1,87 +1,35 @@
 package nl.adrianmensing.krokodil.database.manager;
 
-import nl.adrianmensing.krokodil.database.service.mysql.MySQLDatabaseService;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBService;
+import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBTables;
 import nl.adrianmensing.krokodil.logic.Player;
-import nl.adrianmensing.krokodil.utils.SessionIDGenerator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.sql.*;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.ZonedDateTime;
+import java.util.Optional;
 
 public final class PlayerDataManager implements DataManager<Player> {
 
-    private static final int SESSION_ID_LENGTH = 32;
+    @Nullable
+    public static Player getPlayerByID(String id) {
+        GetItemSpec spec = new GetItemSpec().withPrimaryKey("PlayerID", id);
+        Item item = DynamoDBService.getDynamoDB().getTable(DynamoDBTables.PLAYERS).getItem(spec);
 
-    /**
-     * Retrieves the player data by association of the given session id, and transforms
-     * this data into a {@link Player} object.
-     *
-     * @param sessionID The session id associated with the player.
-     * @return          A {@link Player} object if such an association was found, null otherwise.
-     */
-    public static Player getPlayerBySessionID(String sessionID) throws SQLException {
-        PreparedStatement statement = MySQLDatabaseService
-                .getConnection()
-                .prepareStatement("""
-                    SELECT p.PlayerID, p.Username FROM players AS p INNER JOIN (
-                        SELECT PlayerID
-                        FROM session_player
-                        WHERE SessionID = ?
-                    ) AS sp on p.PlayerID = sp.PlayerID;
-                 """);
+        if (item == null)
+            return null;
 
-        statement.setString(1, sessionID);
-        ResultSet result = statement.executeQuery();
-
-        if (result.next()) {
-            String playerID = result.getString("PlayerID");
-            String username = result.getString("Username");
-
-            return new Player(playerID, username);
-        }
-
-        return null;
+        return new Player(item.getString("PlayerID"), item.getString("Username"));
     }
 
-    public static String createSessionIdFromPlayer(Player player) throws SQLException {
-        PreparedStatement statement = MySQLDatabaseService
-                .getConnection()
-                .prepareStatement("""
-                    INSERT INTO session_player (SessionID, PlayerID, ExpireDate)
-                    VALUES (?, ?, ?);
-                """);
+    public static void savePlayer(@NotNull Player player) {
+        Item item = new Item()
+                .withPrimaryKey("PlayerID", player.id())
+                .withString("Username", Optional.ofNullable(player.username()).orElse(""))
+                .withString("LastUpdated", ZonedDateTime.now().toString());
 
-        String randomSessionID = SessionIDGenerator.randomSessionID(SESSION_ID_LENGTH);
-        String playerID = player.id();
-        Timestamp expireTime = Timestamp.from(Instant.now().plus(7, ChronoUnit.DAYS));
-
-        statement.setString(1, randomSessionID);
-        statement.setString(2, playerID);
-        statement.setTimestamp(3, expireTime);
-
-        if (statement.executeUpdate() > 0)
-            return randomSessionID;
-
-        throw new SQLException("Could not create session ID for player.");
-    }
-
-    public static Player createNewPlayer(String username) throws SQLException {
-        PreparedStatement statement = MySQLDatabaseService
-                .getConnection()
-                .prepareStatement("""
-                    INSERT INTO players (Username) VALUES (?);
-                """, new String[] { "PlayerID" });
-
-        statement.setString(1, username);
-
-        if (statement.executeUpdate() > 0) {
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                String playerID = generatedKeys.getString(1);
-                return new Player(playerID, username);
-            }
-        }
-
-        throw new RuntimeException("Could not create new player.");
+        DynamoDBService.getDynamoDB().getTable(DynamoDBTables.PLAYERS).putItem(item);
     }
 }

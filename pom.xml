@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.5</version>
+		<version>2.5.0-RC1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -32,6 +32,11 @@
     </dependencyManagement>
 
     <repositories>
+        <repository>
+            <id>repo-spring-milestone</id>
+            <name>Spring Milestone Repository</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
         <repository>
             <id>dynamodb-local-frankfurt</id>
             <name>DynamoDB Local Release Repository</name>
@@ -68,6 +73,16 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+
         <!-- Dependencies used for tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -94,6 +109,14 @@
             <version>[1.12,2.0)</version>
         </dependency>
     </dependencies>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo-spring-milestone</id>
+            <name>Spring Milestone Repository</name>
+            <url>https://repo.spring.io/milestone</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 	<build>
 		<plugins>

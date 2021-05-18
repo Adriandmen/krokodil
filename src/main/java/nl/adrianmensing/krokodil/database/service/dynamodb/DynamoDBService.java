@@ -13,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import static nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBTables.*;
 
 public class DynamoDBService implements DatabaseService {
     private static final Regions REGION = Regions.EU_CENTRAL_1;
@@ -40,7 +43,7 @@ public class DynamoDBService implements DatabaseService {
     }
 
     public static void createGameSettingsTable() throws InterruptedException {
-        String tableName = "GameSettings";
+        String tableName = GAME_SETTINGS;
 
         // The GameSettings table will have the following schema:
         //  row:  [(pk) GameID, Settings]
@@ -56,5 +59,39 @@ public class DynamoDBService implements DatabaseService {
         Table table = getDynamoDB().createTable(request);
         table.waitForActive();
         System.out.println("Successfully created table " + tableName);
+    }
+
+    public static void createPlayersTable() throws InterruptedException {
+        String tableName = DynamoDBTables.PLAYERS;
+
+        CreateTableRequest request = new CreateTableRequest();
+        request.withTableName(tableName)
+                .withKeySchema(Collections.singletonList(new KeySchemaElement("PlayerID", KeyType.HASH)))
+                .withAttributeDefinitions(Collections.singletonList(new AttributeDefinition("PlayerID", ScalarAttributeType.S)))
+                .withProvisionedThroughput(
+                        new ProvisionedThroughput()
+                                .withReadCapacityUnits(10L)
+                                .withWriteCapacityUnits(10L));
+
+        Table table = getDynamoDB().createTable(request);
+        table.waitForActive();
+        System.out.println("Successfully created table " + tableName);
+    }
+
+    public static void setupTables() throws InterruptedException {
+        List<String> tables = List.of(GAME_SETTINGS, PLAYERS);
+        List<String> existingTableNames = getExistingTableNames();
+
+        for (String tableName : tables) {
+            if (!existingTableNames.contains(tableName)) {
+                switch (tableName) {
+                    case GAME_SETTINGS -> createGameSettingsTable();
+                    case PLAYERS -> createPlayersTable();
+                    default -> throw new NoSuchElementException("Creator function of table '%s' does not exist".formatted(tableName));
+                }
+            }
+        }
+
+        System.out.println("Successfully created all tables");
     }
 }
