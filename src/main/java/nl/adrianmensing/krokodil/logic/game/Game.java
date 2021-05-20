@@ -111,6 +111,10 @@ public abstract class Game<T extends GameType> implements Storable {
      */
     public abstract Response<?> performAction(Player player, String action, @Nullable Map<String, Object> params);
 
+    public final Response<?> performAction(Player player, String action) {
+        return performAction(player, action, null);
+    }
+
     public abstract void start();
 
     public abstract void finish();

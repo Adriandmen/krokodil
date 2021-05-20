@@ -141,7 +141,7 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
         return new JSONResponse<>(this);
     }
 
-    private boolean isBadTooth(Tooth tooth) {
+    public boolean isBadTooth(Tooth tooth) {
         return position.get(BAD_TOOTH).equals(CrocodileGameUtils.hashedTooth(tooth, salt));
     }
 
