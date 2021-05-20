@@ -17,34 +17,20 @@ public enum GameState {
     FINISHED,
     ABANDONED;
 
-    public static GameState start(GameState state) {
-        if (state == GameState.INITIALIZING) {
-            return IN_PROGRESS;
-        } else {
-            throw new IllegalStateTransitionException();
-        }
+    public static boolean canStart(GameState state) {
+        return state == INITIALIZING;
     }
 
-    public static GameState finish(GameState state) {
-        if (state == GameState.IN_PROGRESS) {
-            return FINISHED;
-        } else {
-            throw new IllegalStateTransitionException();
-        }
+    public static boolean canFinish(GameState state) {
+        return state == IN_PROGRESS;
     }
 
-    public static GameState reset(GameState state) {
-        switch (state) {
-            case FINISHED, IN_PROGRESS -> { return INITIALIZING; }
-            default -> throw new IllegalStateTransitionException();
-        }
+    public static boolean canReset(GameState state) {
+        return state == IN_PROGRESS || state == FINISHED;
     }
 
-    public static GameState stop(GameState state) {
-        switch (state) {
-            case FINISHED, INITIALIZING -> { return ABANDONED; }
-            default -> throw new IllegalStateTransitionException();
-        }
+    public static boolean canStop(GameState state) {
+        return state == INITIALIZING || state == FINISHED;
     }
 }
 

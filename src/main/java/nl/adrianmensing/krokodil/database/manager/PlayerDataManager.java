@@ -5,7 +5,6 @@ import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBService;
 import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBTables;
 import nl.adrianmensing.krokodil.logic.Player;
-import nl.adrianmensing.krokodil.logic.game.Game;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

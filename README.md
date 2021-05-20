@@ -22,15 +22,26 @@ This is a side project, intended to be played online with friends, as a result o
 
 ### `PUT /api/player/username`
 
-- Required: `session_id`
-- Required: `new_username`
+ - Required: `session_id`
+ - Required: `new_username`
+
+### `GET /api/game`
+
+ - Required: `session_id`
 
 ### `POST /api/game/join`
 
-- Required: `session_id`
-- Required: `game_id`
+ - Required: `session_id`
+ - Required: `game_id`
 
 ### `POST /api/game/create`
 
-- Required: `session_id`
-- Returns: `game_id`
+ - Required: `session_id`
+ - Returns: `game_id`
+
+### `POST /api/game/action`
+
+ - Required: `session_id`
+ - Required: `game_id`
+ - Required: `action_name`
+ - Optional: `params`

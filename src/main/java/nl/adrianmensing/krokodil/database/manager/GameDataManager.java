@@ -2,9 +2,11 @@ package nl.adrianmensing.krokodil.database.manager;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBService;
 import nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBTables;
-import nl.adrianmensing.krokodil.logic.Player;
 import nl.adrianmensing.krokodil.logic.game.Game;
 import nl.adrianmensing.krokodil.logic.game.GameState;
 import nl.adrianmensing.krokodil.logic.game.GameType;
@@ -18,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 // TODO: Implement some form of caching to reduce redundant database calls,
 //       because this is unnecessarily expensive.
@@ -37,17 +40,15 @@ public class GameDataManager implements DataManager<Game<?>> {
         Game<?> game = new CrocodileGame();
         String gameID = item.getString("GameID");
         String hostID = item.getString("Host");
-        List<Map<String, String>> players = item.getList("Players");
+        List<String> players = item.getList("Players");
         GameState state = GameState.valueOf(item.getString("State"));
+        Map<String, Object> position = item.getMap("Position");
         GameSettings<GameType.CrocodileGameType> settings = new CrocodileSettings(item.getMap("Settings"));
 
         game.setId(gameID);
         game.setHost(PlayerDataManager.getPlayerByID(hostID));
-
-        for (Map<String, String> player : players) {
-            game.addPlayer(new Player(player.get("id"), player.get("name"), gameID));
-        }
-
+        game.getPlayers().addAll(players);
+        game.setPosition(position);
         game.setState(state);
         game.setSettings(settings);
 
@@ -55,19 +56,22 @@ public class GameDataManager implements DataManager<Game<?>> {
     }
 
     public static void saveGame(@NotNull Game<?> game) {
-        List<Map<String, String>> players = game.getPlayers().stream().map(player -> {
-            Map<String, String> m = new HashMap<>();
-            m.put("id", player.id());
-            m.put("name", player.username());
-            return m;
-        }).toList();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String positionJson;
+        try {
+            positionJson = ow.writeValueAsString(Optional.ofNullable(game.getPosition()).orElse(new HashMap<>()));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
 
         Item item = new Item()
                 .withPrimaryKey("GameID", game.getId())
                 .withString("Host", game.getHost().id())
-                .withList("Players", players)
+                .withList("Players", game.getPlayers())
                 .withString("State", game.getState().name())
                 .withMap("Settings", game.getSettings().getSettings())
+                .withJSON("Position", positionJson)
                 .withString("LastUpdated", ZonedDateTime.now().toString());
 
         DynamoDBService.getDynamoDB().getTable(DynamoDBTables.GAMES).putItem(item);

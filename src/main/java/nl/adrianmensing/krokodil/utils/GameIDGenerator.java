@@ -4,18 +4,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.security.SecureRandom;
 
-public class SessionIDGenerator {
-    private static final String NUMERIC_CHARS = "0123456789";
-    private static final String L_ALPHA_CHARS = "abcdefghijklmnopqrstuvwxyz";
+public class GameIDGenerator {
     private static final String U_ALPHA_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private static final String CHARS = NUMERIC_CHARS + L_ALPHA_CHARS + U_ALPHA_CHARS;
+    private static final String CHARS = U_ALPHA_CHARS;
     private static final SecureRandom random = new SecureRandom();
 
     /**
      * Private constructor to prevent any unwanted instantiations.
      */
-    private SessionIDGenerator() { }
+    private GameIDGenerator() { }
 
     /**
      * Generates a new random session ID with the specified length, which consists of
@@ -26,7 +24,7 @@ public class SessionIDGenerator {
      * @return          A new session ID string.
      */
     @NotNull
-    public static String randomSessionID(int length) {
+    public static String randomGameID(int length) {
         if (length <= 0)
             throw new RuntimeException("Could not generate a random session ID with length " + length);
 

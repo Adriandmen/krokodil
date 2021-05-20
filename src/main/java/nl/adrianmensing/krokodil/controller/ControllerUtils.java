@@ -13,6 +13,12 @@ public class ControllerUtils {
      */
     private static final int PLAYER_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 
+    /**
+     * Creates a proper cookie with the correct settings for the given {@link Player} instance.
+     *
+     * @param player The player which will be converted to a cookie stored value.
+     * @return       A {@link Cookie} containing the Player value and the correct settings.
+     */
     @NotNull
     public static Cookie cookieFromPlayer(@NotNull Player player) {
         Cookie cookie = new Cookie("session_id", player.id());

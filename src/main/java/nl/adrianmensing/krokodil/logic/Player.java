@@ -45,4 +45,12 @@ public record Player(@NotNull String id, String username, String game) implement
     public boolean hasValidUsername() {
         return this.username != null && UserUtils.isValidUsername(this.username);
     }
+
+    public Player withGame(Game<?> game) {
+        return new Player(this.id, this.username, game.getId());
+    }
+
+    public boolean inGame() {
+        return this.game != null && !this.game.isEmpty();
+    }
 }
