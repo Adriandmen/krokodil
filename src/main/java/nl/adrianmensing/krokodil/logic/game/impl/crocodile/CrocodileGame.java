@@ -26,6 +26,11 @@ import static nl.adrianmensing.krokodil.logic.game.impl.crocodile.CrocodileSetti
  */
 public final class CrocodileGame extends Game<CrocodileGameType> {
 
+    private static final String BAD_TOOTH = "BadTooth";
+    private static final String TOOTH_NUMBER = "tooth_number";
+    private static final String TEETH_LIST = "TeethList";
+    private static final String CURRENT_TURN = "CurrentTurn";
+
     public CrocodileGame() {
         this(GameIDGenerator.randomGameID(6));
     }
@@ -37,6 +42,7 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
         this.state = GameState.INITIALIZING;
         this.settings = new CrocodileSettings();
         this.position = new HashMap<>();
+        this.salt = GameIDGenerator.randomGameID(16);
     }
 
     @Override
@@ -52,21 +58,35 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
 
     @Override
     public void start() {
+        Random random = new Random();
+
         // Initialization using the current settings.
-        if (!this.position.containsKey("CurrentTurn")) {
-            Random random = new Random();
+        if (!this.position.containsKey(CURRENT_TURN)) {
             int index = random.nextInt(this.players.size());
             String nextTurnID = this.players.get(index);
-            this.position.put("CurrentTurn", nextTurnID);
+            this.position.put(CURRENT_TURN, nextTurnID);
         }
 
         List<Tooth> teeth = new ArrayList<>();
-        int teethCount = ((BigDecimal) this.settings.getSettings().get(TEETH_COUNT)).intValue();
-        for (int index = 0; index < teethCount; index++) {
-            teeth.add(new Tooth(index, true));
+        int teethCount;
+        Object teethCountSetting = this.settings.getSettings().get(TEETH_COUNT);
+
+        if (teethCountSetting instanceof BigDecimal d) {
+            teethCount = d.intValue();
+        } else if (teethCountSetting instanceof Integer n) {
+            teethCount = n;
+        } else {
+            throw new RuntimeException("Type mismatch");
         }
 
-        this.position.put("TeethList", teeth);
+        for (int index = 1; index <= teethCount; index++) {
+            teeth.add(new Tooth(index));
+        }
+
+        Tooth badTooth = teeth.get(random.nextInt(teeth.size()));
+
+        this.position.put(BAD_TOOTH, CrocodileGameUtils.hashedTooth(badTooth, salt));
+        this.position.put(TEETH_LIST, teeth);
         this.state = GameState.IN_PROGRESS;
     }
 
@@ -121,27 +141,46 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
         return new JSONResponse<>(this);
     }
 
+    private boolean isBadTooth(Tooth tooth) {
+        return position.get(BAD_TOOTH).equals(CrocodileGameUtils.hashedTooth(tooth, salt));
+    }
+
     private Response<CrocodileGame> pickTooth(Player player, Map<String, Object> params) {
         if (this.state != GameState.IN_PROGRESS)
             return new ErrorResponse<>("Cannot pick tooth in the current state", HttpStatus.BAD_REQUEST);
-        if (!params.containsKey("tooth_number"))
+        if (!params.containsKey(TOOTH_NUMBER))
             return new ErrorResponse<>("Missing 'tooth_number' param", HttpStatus.BAD_REQUEST);
-        if (!this.position.getOrDefault("CurrentTurn", "").equals(player.id()))
+        if (!this.position.getOrDefault(CURRENT_TURN, "<none>").equals(player.id()))
             return new ErrorResponse<>("Player ID does not match current player turn", HttpStatus.BAD_REQUEST);
 
         @SuppressWarnings("unchecked")
-        List<Tooth> teeth = ((List<Tooth>) this.position.get("ToothList"));
-        int toothNumber = ((int) params.get("tooth_number"));
+        List<Tooth> teeth = ((List<Tooth>) this.position.get(TEETH_LIST));
+        int toothNumber = ((int) params.get(TOOTH_NUMBER)) - 1;
 
-        Tooth tooth = teeth.get(toothNumber);
+        Tooth pickedTooth = teeth.get(toothNumber);
 
-        if (!tooth.available())
+        if (!pickedTooth.available())
             return new ErrorResponse<>("Invalid tooth number chosen", HttpStatus.BAD_REQUEST);
-        teeth.set(toothNumber, new Tooth(tooth.number(), false));
-        position.put("ToothList", teeth);
+        teeth.set(toothNumber, new Tooth(pickedTooth.number(), false));
+        position.put(TEETH_LIST, teeth);
 
-        // TODO: next turn
+        this.processTurn(pickedTooth);
 
         return new JSONResponse<>(this);
+    }
+
+    private void processTurn(Tooth tooth) {
+        if (isBadTooth(tooth)) {
+            this.finish();
+        }
+
+        this.setNextPlayerTurn();
+    }
+
+    private void setNextPlayerTurn() {
+        String currentTurnPlayerID = (String) position.get(CURRENT_TURN);
+        int currentIndex = players.indexOf(currentTurnPlayerID);
+        int nextIndex = (currentIndex + 1) % players.size();
+        position.put(CURRENT_TURN, players.get(nextIndex));
     }
 }

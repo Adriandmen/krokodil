@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public abstract class Game<T extends GameType> implements Storable {
     protected String id;
+    protected String salt;
     protected List<String> players;
     protected Player host;
     protected GameState state;
@@ -33,6 +34,10 @@ public abstract class Game<T extends GameType> implements Storable {
 
     public String getId() {
         return id;
+    }
+
+    public String getSalt() {
+        return salt;
     }
 
     public List<String> getPlayers() {
@@ -66,6 +71,10 @@ public abstract class Game<T extends GameType> implements Storable {
 
     public void removePlayer(String playerID) {
         players.remove(playerID);
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public void setHost(Player host) {
