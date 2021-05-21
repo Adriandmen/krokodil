@@ -3,6 +3,7 @@ package nl.adrianmensing.krokodil.logic.game.settings;
 import nl.adrianmensing.krokodil.database.Storable;
 import nl.adrianmensing.krokodil.logic.game.Game;
 import nl.adrianmensing.krokodil.logic.game.GameType;
+import nl.adrianmensing.krokodil.response.Response;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,5 +38,5 @@ public abstract class GameSettings<T extends GameType> implements Storable {
      * @param key   The key for the setting that will be updated.
      * @param value The new value for the given key.
      */
-    public abstract void updateSetting(String key, Object value);
+    public abstract Response<?> updateSetting(String key, Object value);
 }

@@ -4,6 +4,10 @@ import nl.adrianmensing.krokodil.logic.game.settings.GameSettings;
 import nl.adrianmensing.krokodil.logic.game.GameType.CrocodileGameType;
 import nl.adrianmensing.krokodil.logic.game.settings.TypeMismatchException;
 import nl.adrianmensing.krokodil.logic.game.settings.UnknownSettingException;
+import nl.adrianmensing.krokodil.response.Response;
+import nl.adrianmensing.krokodil.response.impl.ErrorResponse;
+import nl.adrianmensing.krokodil.response.impl.JSONResponse;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +33,9 @@ public final class CrocodileSettings extends GameSettings<CrocodileGameType> {
     }
 
     @Override
-    public void updateSetting(String key, Object value) {
+    public Response<?> updateSetting(String key, Object value) {
         if (!ALLOWED_SETTINGS.containsKey(key))
-            throw new UnknownSettingException("Unknown key '%s' is not a valid setting key.".formatted(key));
+            return new ErrorResponse<>("Unknown key '%s' is not a valid setting key.".formatted(key), HttpStatus.BAD_REQUEST);
 
         // Perform some type validation before processing the update.
         // This ensures that the types will be consistent throughout the runtime.
@@ -40,9 +44,10 @@ public final class CrocodileSettings extends GameSettings<CrocodileGameType> {
         // Equivalent of the `value instanceof settingType` condition.
         if (!settingType.isInstance(value)) {
             String errorMessage = "The value '%s' is not of type '%s'.";
-            throw new TypeMismatchException(errorMessage.formatted(value.toString(), settingType.getName()));
+            return new ErrorResponse<>(errorMessage.formatted(value.toString(), settingType.getName()), HttpStatus.BAD_REQUEST);
         }
 
         this.settings.put(key, value);
+        return new JSONResponse<>(this);
     }
 }

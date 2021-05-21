@@ -43,6 +43,7 @@ public class GameDataManager implements DataManager<Game<?>> {
         List<String> players = item.getList("Players");
         GameState state = GameState.valueOf(item.getString("State"));
         Map<String, Object> position = item.getMap("Position");
+        String salt = item.getString("Salt");
         GameSettings<GameType.CrocodileGameType> settings = new CrocodileSettings(item.getMap("Settings"));
 
         game.setId(gameID);
@@ -50,6 +51,7 @@ public class GameDataManager implements DataManager<Game<?>> {
         game.getPlayers().addAll(players);
         game.setPosition(position);
         game.setState(state);
+        game.setSalt(salt);
         game.setSettings(settings);
 
         return game;
@@ -72,6 +74,7 @@ public class GameDataManager implements DataManager<Game<?>> {
                 .withString("State", game.getState().name())
                 .withMap("Settings", game.getSettings().getSettings())
                 .withJSON("Position", positionJson)
+                .withString("Salt", game.getSalt())
                 .withString("LastUpdated", ZonedDateTime.now().toString());
 
         DynamoDBService.getDynamoDB().getTable(DynamoDBTables.GAMES).putItem(item);

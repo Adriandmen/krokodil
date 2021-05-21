@@ -1,5 +1,7 @@
 package nl.adrianmensing.krokodil.controller.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.adrianmensing.krokodil.database.manager.GameDataManager;
 import nl.adrianmensing.krokodil.database.manager.PlayerDataManager;
 import nl.adrianmensing.krokodil.logic.Player;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class GameController {
         if (!player.hasValidUsername())
             return new ErrorResponse<>("Cannot join a game without a valid username", HttpStatus.BAD_REQUEST).build();
 
-        Game<?> game = GameDataManager.getGameByID(gameID);
+        Game<?> game = GameDataManager.getGameByID(gameID.toUpperCase());
         if (game == null)
             return new ErrorResponse<>("Could not find Game with the given ID", HttpStatus.NOT_FOUND).build();
 
@@ -83,6 +84,7 @@ public class GameController {
     }
 
     @PostMapping("/action")
+    @SuppressWarnings("unchecked")
     public ResponseEntity<?> postAction(@CookieValue(value = "session_id") String sessionID,
                                         @RequestParam(value = "action_name") String actionName,
                                         @RequestParam(value = "params", required = false) String params) {
@@ -96,8 +98,12 @@ public class GameController {
 
         Map<String, Object> p = new HashMap<>();
 
-        if (params != null)
-            Arrays.stream(params.split(";")).forEach(s -> p.put(s.split("=")[0], s.split("=")[1]));
+        try {
+            if (params != null)
+                p = new ObjectMapper().readValue(params, Map.class);
+        } catch (JsonProcessingException e) {
+            return new ErrorResponse<>("Malformed value 'params'", HttpStatus.BAD_REQUEST).build();
+        }
         Response<?> response = game.performAction(player, actionName, p);
 
         GameDataManager.saveGame(game);

@@ -20,14 +20,18 @@ This is a side project, intended to be played online with friends, as a result o
 
 ## REST API
 
+### `GET /api/game`
+
+ - Required: `session_id`
+
 ### `PUT /api/player/username`
 
  - Required: `session_id`
  - Required: `new_username`
 
-### `GET /api/game`
+### `POST /api/player/info`
 
- - Required: `session_id`
+ - Required: `user_id`
 
 ### `POST /api/game/join`
 
@@ -42,6 +46,5 @@ This is a side project, intended to be played online with friends, as a result o
 ### `POST /api/game/action`
 
  - Required: `session_id`
- - Required: `game_id`
  - Required: `action_name`
  - Optional: `params`

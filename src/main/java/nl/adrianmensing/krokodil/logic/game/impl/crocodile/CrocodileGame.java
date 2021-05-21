@@ -47,12 +47,17 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
 
     @Override
     public Response<?> performAction(Player player, String action, Map<String, Object> params) {
-        switch (CrocodileGameAction.valueOf(action)) {
-            case START_GAME -> { return this.startGame(player); }
-            case STOP_GAME  -> { return this.stopGame(player); }
-            case RESET_GAME -> { return this.resetGame(player); }
-            case PICK_TOOTH -> { return this.pickTooth(player, params); }
-            default -> { return new ErrorResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST); }
+        try {
+            switch (CrocodileGameAction.valueOf(action)) {
+                case START_GAME     -> { return this.startGame(player);             }
+                case STOP_GAME      -> { return this.stopGame(player);              }
+                case RESET_GAME     -> { return this.resetGame(player);             }
+                case PICK_TOOTH     -> { return this.pickTooth(player, params);     }
+                case UPDATE_SETTING -> { return this.updateSetting(player, params); }
+                default -> { return new ErrorResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST); }
+            }
+        } catch (IllegalArgumentException e) {
+            return new ErrorResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -139,6 +144,22 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
 
         this.stop();
         return new JSONResponse<>(this);
+    }
+
+    private Response<?> updateSetting(Player player, Map<String, Object> params) {
+        if (!this.host.id().equals(player.id()))
+            return new ErrorResponse<>(HttpStatus.UNAUTHORIZED);
+        if (this.state != GameState.INITIALIZING)
+            return new ErrorResponse<>("Cannot update settings in current state", HttpStatus.BAD_REQUEST);
+        if (!params.containsKey("key"))
+            return new ErrorResponse<>("Missing param field 'key'", HttpStatus.BAD_REQUEST);
+        if (!params.containsKey("value"))
+            return new ErrorResponse<>("Missing param field 'value'", HttpStatus.BAD_REQUEST);
+
+        String key = (String) params.get("key");
+        Object val = params.get("value");
+
+        return this.settings.updateSetting(key, val);
     }
 
     public boolean isBadTooth(Tooth tooth) {

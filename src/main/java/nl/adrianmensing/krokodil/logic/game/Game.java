@@ -1,5 +1,6 @@
 package nl.adrianmensing.krokodil.logic.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import nl.adrianmensing.krokodil.database.manager.DataManager;
 import nl.adrianmensing.krokodil.database.Storable;
 import nl.adrianmensing.krokodil.logic.Player;
@@ -25,12 +26,14 @@ import java.util.Map;
  */
 public abstract class Game<T extends GameType> implements Storable {
     protected String id;
-    protected String salt;
     protected List<String> players;
     protected Player host;
     protected GameState state;
     protected Map<String, Object> position;
     protected GameSettings<T> settings;
+
+    @JsonIgnore
+    protected String salt;
 
     public String getId() {
         return id;

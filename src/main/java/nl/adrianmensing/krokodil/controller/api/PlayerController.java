@@ -5,6 +5,7 @@ import nl.adrianmensing.krokodil.database.manager.PlayerDataManager;
 import nl.adrianmensing.krokodil.logic.Player;
 import nl.adrianmensing.krokodil.response.Response;
 import nl.adrianmensing.krokodil.response.impl.ErrorResponse;
+import nl.adrianmensing.krokodil.response.impl.JSONResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,15 @@ public class PlayerController {
         return ans;
     }
 
+    @PostMapping("/info")
+    public ResponseEntity<?> requestInfo(@RequestParam(value = "user_id") String userID) {
+        Player player = PlayerDataManager.getPlayerByID(userID);
+        if (player == null)
+            return new ErrorResponse<>("Could not find player with given ID", HttpStatus.NOT_FOUND).build();
+
+        return new JSONResponse<>(player).build();
+    }
+
     @PutMapping("/username")
     public ResponseEntity<?> username(@CookieValue(value = "session_id") String playerID,
                                       @RequestParam(value = "username") String username) {
@@ -45,8 +55,6 @@ public class PlayerController {
         if (response.result().isSuccess()) {
             PlayerDataManager.savePlayer(response.result().getValue());
         }
-
-        System.out.println("saved to DB");
 
         return response.build();
     }
