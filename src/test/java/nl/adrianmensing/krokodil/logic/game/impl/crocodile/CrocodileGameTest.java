@@ -4,6 +4,7 @@ import nl.adrianmensing.krokodil.logic.Player;
 import nl.adrianmensing.krokodil.response.Response;
 import nl.adrianmensing.krokodil.response.impl.ErrorResponse;
 import nl.adrianmensing.krokodil.response.impl.JSONResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,19 +14,22 @@ import java.util.Optional;
 import static nl.adrianmensing.krokodil.logic.game.GameState.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Not exactly unit tests but more semi-e2e tests.
+ */
 public class CrocodileGameTest {
 
-    // TODO: worst tests i've written in a while, but it is 1AM so fuck it.
-    //       simplify/refactor when possible.
+    private CrocodileGame game;
+    private Player player1;
+    private Player player2;
+    private Player player3;
 
-    @Test
-    public void SimpleGameInitializationTest() {
-        CrocodileGame game = new CrocodileGame();
-
-        Player player1 = new Player("A", "Adnan");
-        Player player2 = new Player("B", "Bariuw");
-        Player player3 = new Player("C", "Carol");
-
+    @BeforeEach
+    public void setup() {
+        game = new CrocodileGame();
+        player1 = new Player("A", "Adnan");
+        player2 = new Player("B", "Bariuw");
+        player3 = new Player("C", "Carol");
         game.addPlayer(player1);
         game.addPlayer(player2);
         game.addPlayer(player3);
@@ -33,7 +37,13 @@ public class CrocodileGameTest {
         player2 = player2.withGame(game);
         player3 = player3.withGame(game);
         game.setHost(player1);
+    }
 
+    // TODO: worst tests i've written in a while, but it is 1AM so fuck it.
+    //       simplify/refactor when possible.
+
+    @Test
+    public void SimpleGameInitializationTest() {
         assertThat(game.getHost()).isEqualTo(player1);
         assertThat(game.getHost()).isNotIn(player2, player3);
         assertThat(game.getState()).isEqualTo(INITIALIZING);
@@ -68,28 +78,13 @@ public class CrocodileGameTest {
 
     @Test
     public void PickBadToothInGameTest() {
-        CrocodileGame game = new CrocodileGame();
-
-        Player player1 = new Player("A", "Adnan");
-        Player player2 = new Player("B", "Bariuw");
-        Player player3 = new Player("C", "Carol");
-
-        game.addPlayer(player1);
-        game.addPlayer(player2);
-        game.addPlayer(player3);
-
-        player1 = player1.withGame(game);
-        player2 = player2.withGame(game);
-        player3 = player3.withGame(game);
-        game.setHost(player1);
         game.performAction(player1, "START_GAME");
 
         assertThat(game.getState()).isEqualTo(IN_PROGRESS);
 
         game.getPosition().put("CurrentTurn", player2.id());
 
-        @SuppressWarnings("unchecked")
-        Optional<Tooth> optBadTooth = ((List<Tooth>) game.getPosition().get("TeethList")).stream().filter(game::isBadTooth).findFirst();
+        Optional<Tooth> optBadTooth = getTeethList(game).stream().filter(game::isBadTooth).findFirst();
         String currentPlayerID = ((String) game.getPosition().get("CurrentTurn"));
         assertThat(optBadTooth).isNotEmpty();
         assertThat(currentPlayerID).isEqualTo(player2.id());
@@ -99,5 +94,37 @@ public class CrocodileGameTest {
 
         assertThat(response).isInstanceOf(JSONResponse.class);
         assertThat(game.getState()).isEqualTo(FINISHED);
+    }
+
+    @Test
+    public void PickGoodToothAndGoToNextTurn() {
+        game.performAction(player1, "START_GAME");
+        game.getPosition().put("CurrentTurn", player2.id());
+
+        assertThat(getTeethList(game)).filteredOn(Tooth::available).hasSize(10);
+        Tooth goodTooth = getTeethList(game).stream().filter(Tooth::available).filter(t -> !game.isBadTooth(t)).findFirst().orElseThrow();
+        Response<?> response = game.performAction(player2, "PICK_TOOTH", Map.of("tooth_number", goodTooth.number()));
+
+        assertThat(response).isInstanceOf(JSONResponse.class);
+        assertThat(game.getState()).isEqualTo(IN_PROGRESS);
+        assertThat(game.getPosition().get("CurrentTurn")).isEqualTo(player3.id());
+        assertThat(getTeethList(game)).filteredOn(Tooth::available).hasSize(9);
+
+        Tooth goodTooth2 = getTeethList(game).stream().filter(Tooth::available).filter(t -> !game.isBadTooth(t)).findFirst().orElseThrow();
+        Response<?> response2 = game.performAction(player3, "PICK_TOOTH", Map.of("tooth_number", goodTooth2.number()));
+
+        assertThat(goodTooth).isNotEqualTo(goodTooth2);
+        assertThat(response2).isInstanceOf(JSONResponse.class);
+        assertThat(game.getState()).isEqualTo(IN_PROGRESS);
+        assertThat(game.getPosition().get("CurrentTurn")).isEqualTo(player1.id());
+        assertThat(getTeethList(game)).filteredOn(Tooth::available).hasSize(8);
+    }
+
+
+
+
+    @SuppressWarnings("unchecked")
+    private static List<Tooth> getTeethList(CrocodileGame game) {
+        return ((List<Tooth>) game.getPosition().get("TeethList"));
     }
 }

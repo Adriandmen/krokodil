@@ -52,7 +52,7 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
             case STOP_GAME  -> { return this.stopGame(player); }
             case RESET_GAME -> { return this.resetGame(player); }
             case PICK_TOOTH -> { return this.pickTooth(player, params); }
-            default -> { return new JSONResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST); }
+            default -> { return new ErrorResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST); }
         }
     }
 

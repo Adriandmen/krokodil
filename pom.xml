@@ -37,11 +37,6 @@
             <name>Spring Milestone Repository</name>
             <url>https://repo.spring.io/milestone</url>
         </repository>
-        <repository>
-            <id>dynamodb-local-frankfurt</id>
-            <name>DynamoDB Local Release Repository</name>
-            <url>https://s3.eu-central-1.amazonaws.com/dynamodb-local-frankfurt/release</url>
-        </repository>
     </repositories>
 
 	<dependencies>
@@ -101,12 +96,6 @@
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>0.8.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>DynamoDBLocal</artifactId>
-            <version>[1.12,2.0)</version>
         </dependency>
     </dependencies>
 

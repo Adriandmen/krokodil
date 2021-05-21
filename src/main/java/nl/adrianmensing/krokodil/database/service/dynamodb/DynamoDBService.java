@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 import static nl.adrianmensing.krokodil.database.service.dynamodb.DynamoDBTables.*;
 
 public class DynamoDBService implements DatabaseService {
-    private static final Regions REGION = Regions.EU_CENTRAL_1;
+    private static final Regions REGION = Regions.fromName(System.getenv("REGION"));
     private static DynamoDB dynamoDB = null;
 
     public static synchronized DynamoDB getDynamoDB() {
