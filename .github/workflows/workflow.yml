@@ -25,15 +25,11 @@ jobs:
 
       # Test phase
       - name: Run the tests with Maven
-        run: mvn test
-
-      # Integration test
-      - name: Run the integration tests
         env:
           REGION: ${{ secrets.REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: mvn failsafe:integration-test
+        run: mvn test failsafe:integration-test
 
       # Generate code coverage report
       - name: Generate code coverage report
