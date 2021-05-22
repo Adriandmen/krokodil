@@ -7,7 +7,29 @@ import nl.adrianmensing.krokodil.utils.result.Result;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-public record ErrorResponse<T>(String errorMessage, HttpStatus status, HttpHeaders headers) implements Response<T> {
+public class ErrorResponse<T> implements Response<T> {
+
+    private final String errorMessage;
+    private final HttpStatus status;
+    private final HttpHeaders headers;
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public HttpStatus status() {
+        return status;
+    }
+
+    public HttpHeaders headers() {
+        return headers;
+    }
+
+    public ErrorResponse(String errorMessage, HttpStatus status, HttpHeaders headers) {
+        this.errorMessage = errorMessage;
+        this.status = status;
+        this.headers = headers;
+    }
 
     public ErrorResponse(HttpStatus status) {
         this(null, status, null);

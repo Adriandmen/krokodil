@@ -12,11 +12,27 @@ import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
-public record Player(@NotNull String id, String username, String game) implements Entity, Storable {
+public class Player implements Entity, Storable {
+    private final String id;
+    private final String username;
+    private final String game;
 
-    public Player {
-        if (username != null && !username.isEmpty() && !UserUtils.isValidUsername(username))
-            throw new IllegalArgumentException("Username '%s' is not a valid username".formatted(username));
+    public String id() {
+        return id;
+    }
+
+    public String username() {
+        return username;
+    }
+
+    public String game() {
+        return game;
+    }
+
+    public Player(@NotNull String id, String username, String game) {
+        this.id = id;
+        this.username = username;
+        this.game = game;
     }
 
     public Player() {

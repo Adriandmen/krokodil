@@ -9,7 +9,23 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public record JSONResponse<T>(T value, HttpStatus status) implements BasicResponse<T> {
+public class JSONResponse<T> implements BasicResponse<T> {
+
+    private final T value;
+    private final HttpStatus status;
+
+    public JSONResponse(T value, HttpStatus status) {
+        this.value = value;
+        this.status = status;
+    }
+
+    public T value() {
+        return value;
+    }
+
+    public HttpStatus status() {
+        return status;
+    }
 
     public JSONResponse(T value) {
         this(value, defaultStatus);

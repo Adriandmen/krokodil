@@ -28,7 +28,7 @@ public class PlayerController {
         long next = System.nanoTime();
 
         Map<String, Object> ans = new HashMap<>();
-        ans.put("elapsed", "%f ms".formatted(((double) next - curr) / 1_000_000).replace(',', '.'));
+        ans.put("elapsed", String.format("%f ms", ((double) next - curr) / 1_000_000).replace(',', '.'));
         ans.put("body", player);
 
         return ans;

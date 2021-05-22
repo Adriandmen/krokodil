@@ -35,7 +35,7 @@ public final class CrocodileSettings extends GameSettings<CrocodileGameType> {
     @Override
     public Response<?> updateSetting(String key, Object value) {
         if (!ALLOWED_SETTINGS.containsKey(key))
-            return new ErrorResponse<>("Unknown key '%s' is not a valid setting key.".formatted(key), HttpStatus.BAD_REQUEST);
+            return new ErrorResponse<>(String.format("Unknown key '%s' is not a valid setting key.", key), HttpStatus.BAD_REQUEST);
 
         // Perform some type validation before processing the update.
         // This ensures that the types will be consistent throughout the runtime.
@@ -43,8 +43,7 @@ public final class CrocodileSettings extends GameSettings<CrocodileGameType> {
 
         // Equivalent of the `value instanceof settingType` condition.
         if (!settingType.isInstance(value)) {
-            String errorMessage = "The value '%s' is not of type '%s'.";
-            return new ErrorResponse<>(errorMessage.formatted(value.toString(), settingType.getName()), HttpStatus.BAD_REQUEST);
+            return new ErrorResponse<>(HttpStatus.BAD_REQUEST);
         }
 
         this.settings.put(key, value);

@@ -2,7 +2,13 @@ package nl.adrianmensing.krokodil.utils.result;
 
 import java.util.NoSuchElementException;
 
-public final record Failure<R>(String errorMessage) implements Result<R> {
+public final class Failure<R> implements Result<R> {
+
+    private final String errorMessage;
+
+    public Failure(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     @Override
     public boolean isSuccess() {

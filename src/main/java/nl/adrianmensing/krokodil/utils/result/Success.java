@@ -2,7 +2,14 @@ package nl.adrianmensing.krokodil.utils.result;
 
 import java.util.NoSuchElementException;
 
-public final record Success<R>(R value) implements Result<R> {
+public final class Success<R> implements Result<R> {
+
+    private final R value;
+
+    public Success(R value) {
+        this.value = value;
+    }
+
     @Override
     public boolean isSuccess() {
         return true;

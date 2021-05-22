@@ -87,9 +87,14 @@ public class DynamoDBService implements DatabaseService {
         for (String tableName : tables) {
             if (!existingTableNames.contains(tableName)) {
                 switch (tableName) {
-                    case GAMES -> createGamesTable();
-                    case PLAYERS -> createPlayersTable();
-                    default -> throw new NoSuchElementException("Creator function of table '%s' does not exist".formatted(tableName));
+                    case GAMES:
+                        createGamesTable();
+                        break;
+                    case PLAYERS:
+                        createPlayersTable();
+                        break;
+                    default:
+                        throw new NoSuchElementException(String.format("Creator function of table '%s' does not exist", tableName));
                 }
             }
         }

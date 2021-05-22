@@ -49,12 +49,12 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
     public Response<?> performAction(Player player, String action, Map<String, Object> params) {
         try {
             switch (CrocodileGameAction.valueOf(action)) {
-                case START_GAME     -> { return this.startGame(player);             }
-                case STOP_GAME      -> { return this.stopGame(player);              }
-                case RESET_GAME     -> { return this.resetGame(player);             }
-                case PICK_TOOTH     -> { return this.pickTooth(player, params);     }
-                case UPDATE_SETTING -> { return this.updateSetting(player, params); }
-                default -> { return new ErrorResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST); }
+                case START_GAME: { return this.startGame(player);             }
+                case STOP_GAME : { return this.stopGame(player);              }
+                case RESET_GAME: { return this.resetGame(player);             }
+                case PICK_TOOTH: { return this.pickTooth(player, params);     }
+                case UPDATE_SETTING: { return this.updateSetting(player, params); }
+                default: { return new ErrorResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST); }
             }
         } catch (IllegalArgumentException e) {
             return new ErrorResponse<>("Unrecognized action received", HttpStatus.BAD_REQUEST);
@@ -76,10 +76,10 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
         int teethCount;
         Object teethCountSetting = this.settings.getSettings().get(TEETH_COUNT);
 
-        if (teethCountSetting instanceof BigDecimal d) {
-            teethCount = d.intValue();
-        } else if (teethCountSetting instanceof Integer n) {
-            teethCount = n;
+        if (teethCountSetting instanceof BigDecimal) {
+            teethCount = ((BigDecimal) teethCountSetting).intValue();
+        } else if (teethCountSetting instanceof Integer) {
+            teethCount = (Integer) teethCountSetting;
         } else {
             throw new RuntimeException("Type mismatch");
         }
