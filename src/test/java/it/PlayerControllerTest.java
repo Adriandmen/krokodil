@@ -56,7 +56,7 @@ public class PlayerControllerTest extends IntegrationTest {
     @Test
     public void SetUsernameForPlayer() throws Exception {
         Cookie session_id = generateNewPlayerCookie();
-        mvc.perform(put("/api/player/username").cookie(session_id).param("username", "Adnan"))
+        mvc.perform(post("/api/player/username").cookie(session_id).param("username", "Adnan"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
@@ -81,7 +81,7 @@ public class PlayerControllerTest extends IntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
-        mvc.perform(put("/api/player/username").cookie(session_id).param("username", "Adnan"))
+        mvc.perform(post("/api/player/username").cookie(session_id).param("username", "Adnan"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 

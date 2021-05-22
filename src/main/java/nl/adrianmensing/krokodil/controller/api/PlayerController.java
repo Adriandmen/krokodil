@@ -43,7 +43,7 @@ public class PlayerController {
         return new JSONResponse<>(player).build();
     }
 
-    @PutMapping("/username")
+    @PostMapping("/username")
     public ResponseEntity<?> username(@CookieValue(value = "session_id") String playerID,
                                       @RequestParam(value = "username") String username) {
         Player player = PlayerDataManager.getPlayerByID(playerID);
