@@ -169,4 +169,25 @@ public class PlayerControllerTest extends IntegrationTest {
         assertThat(gameObject.getJSONObject("position").getJSONArray("TeethList").length()).isEqualTo(16);
         assertThat(gameObject.getJSONObject("position").getString("BadTooth")).matches("^[0-9a-f]{32}$");
     }
+
+    @Test
+    public void GenerateNewGameInInitialState() throws Exception {
+        Cookie player1 = generateNewPlayerCookie("Adnan");
+        Cookie player2 = generateNewPlayerCookie("bbbbb");
+        Cookie player3 = generateNewPlayerCookie("ccccc");
+        Cookie player4 = generateNewPlayerCookie("ddddd");
+        Cookie player5 = generateNewPlayerCookie("eeeee");
+
+        String hostContent = mvc.perform(post("/api/game/create").cookie(player1))
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+        JSONObject hostObject = new JSONObject(hostContent);
+        String gameID = hostObject.getString("game");
+
+        mvc.perform(post("/api/game/join").cookie(player2).param("game_id", gameID)).andExpect(status().isOk());
+        mvc.perform(post("/api/game/join").cookie(player3).param("game_id", gameID)).andExpect(status().isOk());
+        mvc.perform(post("/api/game/join").cookie(player4).param("game_id", gameID)).andExpect(status().isOk());
+        mvc.perform(post("/api/game/join").cookie(player5).param("game_id", gameID)).andExpect(status().isOk());
+    }
 }

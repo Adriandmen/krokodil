@@ -175,9 +175,14 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
             return new ErrorResponse<>("Player ID does not match current player turn", HttpStatus.BAD_REQUEST);
 
         @SuppressWarnings("unchecked")
-        List<Tooth> teeth = ((List<Tooth>) this.position.get(TEETH_LIST));
+        List<LinkedHashMap<String, Object>> teethLinked = ((List<LinkedHashMap<String, Object>>) this.position.get(TEETH_LIST));
+        List<Tooth> teeth = new ArrayList<>();
+        teethLinked.forEach(m -> teeth.add(new Tooth(((BigDecimal) m.get("number")).intValue(), ((boolean) m.get("available")))));
+
         int toothNumber = ((int) params.get(TOOTH_NUMBER)) - 1;
 
+        System.out.println(teeth);
+        System.out.println(toothNumber);
         Tooth pickedTooth = teeth.get(toothNumber);
 
         if (!pickedTooth.available())
@@ -192,6 +197,7 @@ public final class CrocodileGame extends Game<CrocodileGameType> {
 
     private void processTurn(Tooth tooth) {
         if (isBadTooth(tooth)) {
+            this.position.put("X", tooth.number());
             this.finish();
         }
 

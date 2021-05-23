@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Le Crocodile</title>
-    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="/style.css"/>
     <script src="welcome.js"></script>
 </head>
 <body>
-    <p>Welcome <span id="player-username"></span></p>
+    <p style="padding: 30px;">Welcome <span id="player-username"></span></p>
+
+    <button style="display: none" onclick="createGame()">Create Game</button>
+
+    <button style="margin: 20px;" onclick="redirectToGame()">Join Game</button>
 
     <script>
         setUsername();
